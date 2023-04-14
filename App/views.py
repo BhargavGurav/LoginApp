@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from App.models import Customer
-from django.core.mail import EmailMessage
+from django.core.mail import send_mail
 from django.conf import settings
 
 # Create your views here.
@@ -15,14 +15,8 @@ def index(request):
             return render(request, 'index.html', {'status' : 'No user with the data'})
         else:
             if cust.pass1==password:
-                email = EmailMessage(
-                    'About login activity in LoginApp',
-                    'Hello user, you have logged in successfully in our app. Thank you for reviewing it.',
-                    settings.EMAIL_HOST_USER,
-                    [username],
-                )
-                email.fail_silently = False
-                email.send()
+                from_mail = settings.EMAIL_HOST_USER
+                send_mail('About login to system', 'Recent new device tried to login in your system.', from_mail, [username])
                 return render(request, 'index.html', {'status' : 'Logged in successfully'})
     return render(request, 'index.html')
 
